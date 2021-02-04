@@ -2,6 +2,7 @@ package app.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "tblUsers")
@@ -17,6 +18,10 @@ public class User {
     @Column(nullable=false)
     @NotBlank(message = "Email is mandatory")
     private String email;
+
+    @Column(nullable = false)
+    @Size(min=4)
+    private String password;
 
     public User() {
     }
@@ -43,5 +48,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
