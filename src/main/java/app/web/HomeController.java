@@ -1,9 +1,12 @@
 package app.web;
 
 import app.entities.User;
+
 import java.util.*;
+
 import app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,10 +20,12 @@ import javax.validation.Valid;
 public class HomeController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public HomeController(UserRepository userRepository) {
+    public HomeController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/")
@@ -41,6 +46,7 @@ public class HomeController {
             return "create";
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return "redirect:/";
     }
@@ -48,7 +54,7 @@ public class HomeController {
     @GetMapping("/edit/{id}")
     public String editUser(@PathVariable("id") Long id, Model model) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         model.addAttribute("user", user);
         return "edit";
     }
@@ -63,6 +69,7 @@ public class HomeController {
         userRepository.save(user);
         return "redirect:/";
     }
+
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id, Model model) {
         User user = userRepository.findById(id)
