@@ -7,10 +7,11 @@ idea create maven project
 
 mvn dependency:tree
 
-
 npm i [--save-prod]
 
 npm install --global gulp-cli
+
+gulp clean
 
 gulp scripts
 

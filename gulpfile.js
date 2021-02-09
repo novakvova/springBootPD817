@@ -24,9 +24,9 @@ gulp.task("minify", function () {
 
 // Dependency Dirs
 var deps = {
-    // "jquery": {
-    //     "dist/*": ""
-    // },
+    "jquery": {
+        "dist/*": ""
+    },
     "bootstrap": {
         "dist/**/*": ""
     },
