@@ -3,5 +3,12 @@
   "version": "1.0.0",
   "dependencies": {
     "bootstrap": "^4.6.0"
+  },
+  "devDependencies": {
+    "gulp": "4.0.0",
+    "gulp-concat": "2.6.1",
+    "gulp-uglify": "3.0.0",
+    "merge-stream": "1.0.1",
+    "rimraf": "2.6.2"
   }
 }

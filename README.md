@@ -7,6 +7,13 @@ idea create maven project
 
 mvn dependency:tree
 
+
+npm i [--save-prod]
+
+npm install --global gulp-cli
+
+gulp scripts
+
 mvn spring-boot:run
 
 http://localhost:8082/
