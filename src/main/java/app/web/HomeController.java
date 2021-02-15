@@ -1,11 +1,16 @@
 package app.web;
 
+import app.entities.Role;
 import app.entities.User;
 
 import java.util.*;
 
+import app.repositories.RoleRepository;
 import app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +25,22 @@ import javax.validation.Valid;
 public class HomeController {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public HomeController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public HomeController(UserRepository userRepository,
+                          RoleRepository roleRepository,
+                          PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/")
     public String home(Model model) {
+        Pageable pageable = PageRequest.of(1, 1);
+        Page<Role> page = roleRepository.findAll(pageable);
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         return "index";
