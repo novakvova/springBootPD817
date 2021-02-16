@@ -7,6 +7,7 @@ import java.util.*;
 
 import app.repositories.RoleRepository;
 import app.repositories.UserRepository;
+import app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 
@@ -27,22 +29,37 @@ public class HomeController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Autowired
     public HomeController(UserRepository userRepository,
+                          UserService userService,
                           RoleRepository roleRepository,
                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        Pageable pageable = PageRequest.of(1, 1);
-        Page<Role> page = roleRepository.findAll(pageable);
-        List<User> users = userRepository.findAll();
+    public String home(@RequestParam(name="page", defaultValue="1") int pageNo,
+                       @RequestParam(name="sortField", defaultValue = "name") String sortField,
+                       @RequestParam(name="sortDir", defaultValue = "asc") String sortDir,
+                       Model model) {
+        //pageNo = pageNo==null ? 1 : pageNo;
+        Page<User> page = userService.findPaginated(pageNo, 2, sortField, sortDir);
+        List<User> users = page.getContent();//userRepository.findAll();
         model.addAttribute("users", users);
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         return "index";
     }
 

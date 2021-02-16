@@ -19,8 +19,17 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
+                                    <th>
+                                        <a th:href="@{'/?page='+${currentPage}+'&sortField=name&sortDir='+${reverseSortDir}}">
+                                            Name
+                                        </a>
+
+                                    </th>
+                                    <th>
+                                        <a th:href="@{'/?page='+${currentPage}+'&sortField=email&sortDir='+${reverseSortDir}}">
+                                            Email
+                                        </a>
+                                    </th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -36,6 +45,27 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <nav th:if = "${totalPages > 1}" aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li  th:classappend="${currentPage > 1} ? '' : 'disabled'"
+                                         class="page-item">
+                                        <a class="page-link" th:href="@{'/?page='+${(currentPage+1)-2}+'&sortField='+${sortField}}">Previous</a>
+                                    </li>
+
+                                    <li th:each="i: ${#numbers.sequence(1, totalPages)}" class="page-item"
+                                        th:classappend="${i==currentPage} ? 'active' : ''">
+                                        <a class="page-link" th:href="@{'/?page='+${i}+'&sortField='+${sortField}}">[[${i}]]</a>
+                                    </li>
+
+                                    <li th:classappend="${currentPage < totalPages} ? '' : 'disabled'"
+                                         class="page-item">
+                                        <a class="page-link" th:href="@{'/?page='+${currentPage+1}+'&sortField='+${sortField}}">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <div>
+                                Всього записів: [[${totalItems}]]
+                            </div>
                         </div>
                         <p><a href="/create">Add a new user</a></p>
                     </div>
