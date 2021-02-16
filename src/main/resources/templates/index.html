@@ -49,17 +49,17 @@
                                 <ul class="pagination">
                                     <li  th:classappend="${currentPage > 1} ? '' : 'disabled'"
                                          class="page-item">
-                                        <a class="page-link" th:href="@{'/?page='+${(currentPage+1)-2}+'&sortField='+${sortField}}">Previous</a>
+                                        <a class="page-link" th:href="@{'/?page='+${(currentPage+1)-2}+'&sortField='+${sortField}+'&sortDir='+${sortDir}}">Previous</a>
                                     </li>
 
                                     <li th:each="i: ${#numbers.sequence(1, totalPages)}" class="page-item"
                                         th:classappend="${i==currentPage} ? 'active' : ''">
-                                        <a class="page-link" th:href="@{'/?page='+${i}+'&sortField='+${sortField}}">[[${i}]]</a>
+                                        <a class="page-link" th:href="@{'/?page='+${i}+'&sortField='+${sortField}+'&sortDir='+${sortDir}}">[[${i}]]</a>
                                     </li>
 
                                     <li th:classappend="${currentPage < totalPages} ? '' : 'disabled'"
                                          class="page-item">
-                                        <a class="page-link" th:href="@{'/?page='+${currentPage+1}+'&sortField='+${sortField}}">Next</a>
+                                        <a class="page-link" th:href="@{'/?page='+${currentPage+1}+'&sortField='+${sortField}+'&sortDir='+${sortDir}}">Next</a>
                                     </li>
                                 </ul>
                             </nav>
