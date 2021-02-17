@@ -1,5 +1,6 @@
 package app.web;
 
+import app.dto.FindUserDTO;
 import app.entities.Role;
 import app.entities.User;
 
@@ -48,7 +49,11 @@ public class HomeController {
                        @RequestParam(name="sortDir", defaultValue = "asc") String sortDir,
                        Model model) {
         //pageNo = pageNo==null ? 1 : pageNo;
-        Page<User> page = userService.findPaginated(pageNo, 2, sortField, sortDir);
+        //Page<User> page = userService.findPaginated(pageNo, 2, sortField, sortDir);
+        FindUserDTO findUser = new FindUserDTO();
+//        findUser.setName("Анджеліна");
+//        findUser.setEmail("gmail");
+        Page<User> page = userService.findUserPaginated(findUser, pageNo, 2, sortField, sortDir);
         List<User> users = page.getContent();//userRepository.findAll();
         model.addAttribute("users", users);
 

@@ -1,12 +1,16 @@
 package app.service;
 
+import app.dto.FindUserDTO;
 import app.entities.User;
 import app.repositories.UserRepository;
+import app.search.SearchCriteria;
+import app.search.SearchSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,5 +60,21 @@ public class UserServiceImpl implements UserService {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         return this.userRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<User> findUserPaginated(FindUserDTO findUserDTO, int pageNo, int pageSize, String sortField, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+
+
+        Specification<User> query =
+                Specification
+                        .where(new SearchSpecification(new SearchCriteria("name", ":", findUserDTO.getName())))
+                        .and(new SearchSpecification(new SearchCriteria("email", ":", findUserDTO.getEmail())));
+
+        return this.userRepository.findAll(query, pageable);
     }
 }
