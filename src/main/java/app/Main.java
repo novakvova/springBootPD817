@@ -1,5 +1,6 @@
 package app;
 
+import app.seeder.SeederDb;
 import app.storage.StorageProperties;
 import app.storage.StorageService;
 import org.springframework.boot.CommandLineRunner;
@@ -23,10 +24,16 @@ public class Main {
     }
 
     @Bean
-    CommandLineRunner init(StorageService storageService) {
+    CommandLineRunner init(StorageService storageService, SeederDb seederDb) {
         return (args) -> {
             //storageService.deleteAll();
-            //storageService.init();
+            try {
+                seederDb.SeedAllTabels();
+                storageService.init();
+            }
+            catch(Exception ex) {
+                System.out.println("----propblem cteate folder--------");
+            }
         };
     }
 
