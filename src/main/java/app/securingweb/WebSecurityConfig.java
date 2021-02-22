@@ -1,5 +1,6 @@
 package app.securingweb;
 
+import app.constants.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/robots.txt").permitAll()
-                .antMatchers("/create").permitAll()
+                .antMatchers("/create").hasAuthority(Roles.Admin)
                 .antMatchers("/lib/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
