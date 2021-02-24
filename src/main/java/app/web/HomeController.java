@@ -6,6 +6,7 @@ import app.entities.User;
 
 import java.util.*;
 
+import app.mail.EmailService;
 import app.repositories.RoleRepository;
 import app.repositories.UserRepository;
 import app.service.UserService;
@@ -31,16 +32,19 @@ public class HomeController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
+    private final EmailService emailService;
 
     @Autowired
     public HomeController(UserRepository userRepository,
                           UserService userService,
                           RoleRepository roleRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                          EmailService emailService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
+        this.emailService= emailService;
     }
 
     @GetMapping("/")
@@ -78,6 +82,8 @@ public class HomeController {
         if (result.hasErrors()) {
             return "create";
         }
+        emailService.sendSimpleMessage(user.getEmail(), "Вас зареєстровано!",
+                "Тепер ми знаємо про вас");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
