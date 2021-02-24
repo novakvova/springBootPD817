@@ -44,6 +44,9 @@ public class AccountController {
         if (result.hasErrors()) {
             return "forgotPassword";
         }
+        //Send message email
+        
+
         return "sendEmailSucces";
     }
 }
