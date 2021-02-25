@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
         String subject = "Reset Password";
         String text = "Щоб відновити пароль нажміть на силку \r\n" +
                 "<a href = '"+url+"'>Відновити</a>";
-        emailService.sendSimpleMessage(user.getEmail(),subject,text);
+        emailService.sendMimeMessage(user.getEmail(),subject,text);
     }
 
 

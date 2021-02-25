@@ -20,23 +20,30 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(NOREPLY_ADDRESS);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(text);
+
+            emailSender.send(message);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendMimeMessage(String to, String subject, String text) {
+        try {
             MimeMessage mimeMessage = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             String htmlMsg = text;
-//mimeMessage.setContent(htmlMsg, "text/html"); /** Use this or below line **/
             helper.setText(htmlMsg, true); // Use this or above line.
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setFrom(NOREPLY_ADDRESS);
             emailSender.send(mimeMessage);
-
-//            SimpleMailMessage message = new SimpleMailMessage();
-//            message.setFrom(NOREPLY_ADDRESS);
-//            message.setTo(to);
-//            message.setSubject(subject);
-//            message.setText(text);
-//
-//            emailSender.send(message);
 
         } catch (Exception exception) {
             exception.printStackTrace();
