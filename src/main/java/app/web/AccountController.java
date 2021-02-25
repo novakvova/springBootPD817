@@ -4,12 +4,14 @@ import app.dto.FindUserDTO;
 import app.dto.ForgotPasswordDTO;
 import app.entities.PasswordResetToken;
 import app.entities.User;
+import app.mail.EmailService;
 import app.repositories.PasswordResetTokenRepository;
 import app.repositories.RoleRepository;
 import app.repositories.UserRepository;
 import app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,23 +21,28 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import org.springframework.core.env.Environment;
+import java.util.*;
 
 @Controller
 public class AccountController {
 
     private final UserRepository userRepository;
-    PasswordResetTokenRepository passwordResetTokenRepository;
+    private final UserService userService;
+    //private final Environment env;
 
     @Autowired
     public AccountController(UserRepository userRepository,
-                             PasswordResetTokenRepository passwordResetTokenRepository) {
+                             UserService userService
+
+                             //Environment env,
+                             ) {
         this.userRepository = userRepository;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.userService=userService;
+
+        //this.env=env;
     }
 
     @GetMapping("/login")
@@ -49,7 +56,9 @@ public class AccountController {
     }
 
     @PostMapping("/sendMessagePassword")
-    public String sendResetPassword(@Valid ForgotPasswordDTO forgotPasswordDTO, BindingResult result, Model model) {
+    public String sendResetPassword(final HttpServletRequest request,
+                                    @Valid ForgotPasswordDTO forgotPasswordDTO,
+                                    BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "forgotPassword";
         }
@@ -60,23 +69,18 @@ public class AccountController {
             model.addAttribute("error", "Дана пошта відсутня");
             return "forgotPassword";
         }
-        PasswordResetToken passwordResetToken;
-        String token = UUID.randomUUID().toString();
-        Optional<PasswordResetToken> optional = passwordResetTokenRepository.findById(user.getId());
+        String domain = getAppUrl(request);
+        userService.resetPasswordSendEmail(user, domain);
 
-        if (optional.isPresent()) {
-            passwordResetToken = optional.get();
-            passwordResetToken.setExpiryDate(new Date(System.currentTimeMillis()+PasswordResetToken.getEXPIRATION()));
-            passwordResetToken.setToken(token);
-        }
-        else
-            passwordResetToken=new PasswordResetToken(token, user);
-        passwordResetTokenRepository.save(passwordResetToken);
-//        userService.createPasswordResetTokenForUser(user, token);
 
-//        mailSender.send(constructResetTokenEmail(getAppUrl(request),
-//                request.getLocale(), token, user));
-
-        return "sendEmailSucces";
+        return "sendEmailSuccess";
     }
+
+    private String getAppUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
+
+
+
+
 }

@@ -18,4 +18,6 @@ public interface UserService {
     Page<User> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection);
 
     Page<User> findUserPaginated(FindUserDTO findUserDTO, int pageNo, int pageSize, String sortField, String sortDirection);
+
+    void resetPasswordSendEmail(User user, String domain);
 }

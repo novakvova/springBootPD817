@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import javax.mail.internet.MimeMessage;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -17,14 +20,25 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(NOREPLY_ADDRESS);
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
-            emailSender.send(message);
+            MimeMessage mimeMessage = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            String htmlMsg = text;
+//mimeMessage.setContent(htmlMsg, "text/html"); /** Use this or below line **/
+            helper.setText(htmlMsg, true); // Use this or above line.
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setFrom(NOREPLY_ADDRESS);
+            emailSender.send(mimeMessage);
 
-        } catch (MailException exception) {
+//            SimpleMailMessage message = new SimpleMailMessage();
+//            message.setFrom(NOREPLY_ADDRESS);
+//            message.setTo(to);
+//            message.setSubject(subject);
+//            message.setText(text);
+//
+//            emailSender.send(message);
+
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
