@@ -68,6 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/forgotPassword").permitAll()
                 .antMatchers(HttpMethod.POST, "/sendMessagePassword").permitAll()
                 .antMatchers("/lib/**").permitAll()
+                .antMatchers("/images/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
